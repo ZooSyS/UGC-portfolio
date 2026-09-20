@@ -1,6 +1,6 @@
 import VideoEmbed from "../components/VideoEmbed";
 
-async function getProjects() {
+async function getSiteData() {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
@@ -11,12 +11,26 @@ async function getProjects() {
 
   if (!response.ok) {
     console.error("Notion API error:", await response.text());
-    return [];
+    return { projects: [], content: {} };
   }
 
-  const data = await response.json();
+  return response.json();
+}
 
-  return (data.results || [])
+function first(value, fallback = "") {
+  if (Array.isArray(value)) return value[0] || fallback;
+  return value || fallback;
+}
+
+function text(value, fallback = "") {
+  if (Array.isArray(value)) return value.join("\n");
+  return value || fallback;
+}
+
+export default async function Home() {
+  const { projects: notionProjects = [], content = {} } = await getSiteData();
+
+  const projects = notionProjects
     .map((page) => {
       const properties = page.properties || {};
 
@@ -40,22 +54,23 @@ async function getProjects() {
         return "";
       };
 
-      const title = textProperty(properties["Название"]);
-      const platform = textProperty(properties["Платформа"]);
-      const video = textProperty(properties["Ссылка"]);
-
       return {
         id: page.id,
-        title,
-        platform,
-        video,
+        title: textProperty(properties["Название"]),
+        platform: textProperty(properties["Платформа"]),
+        video: textProperty(properties["Ссылка"]),
       };
     })
     .filter((project) => project.video);
-}
 
-export default async function Home() {
-  const projects = await getProjects();
+  const hero = content.hero || {};
+  const about = content.about || {};
+  const contact = content.contact || {};
+  const footer = content.footer || {};
+
+  const heroImage = first(hero.image);
+  const aboutImage = first(about.image);
+  const contactEmail = first(contact.email, "hello@example.com");
 
   return (
     <main>
@@ -71,17 +86,21 @@ export default async function Home() {
       <section className="hero" id="top">
         <div className="hero-copy">
           <p className="eyebrow">UGC CREATOR · CONTENT · REVIEWS</p>
-          <h1>Контент,<br /><em>которому</em> верят.</h1>
+          <h1>{first(hero.title, "Контент, которому верят.")}</h1>
           <p className="hero-text">
-            Создаю живые видео для брендов — от распаковок и обзоров
-            до нативных lifestyle-сюжетов.
+            {text(hero.text, "Создаю живые видео для брендов — от распаковок и обзоров до нативных lifestyle-сюжетов.")}
           </p>
-          <a className="button" href="#work">Смотреть работы <span>↓</span></a>
+          <a className="button" href="#work">
+            {first(hero.button, "Смотреть работы")} <span>↓</span>
+          </a>
         </div>
         <div className="hero-note">
           <span>01</span>
           <p>Не просто показать продукт.<br />Показать его в жизни.</p>
         </div>
+        {heroImage && (
+          <img className="hero-image" src={heroImage} alt="" />
+        )}
       </section>
 
       <section className="work" id="work">
@@ -114,23 +133,27 @@ export default async function Home() {
         <div className="about-number">02</div>
         <div>
           <p className="eyebrow">ABOUT</p>
-          <h2>Живой контент<br />вместо постановки.</h2>
+          <h2>{first(about.title, "Живой контент вместо постановки.")}</h2>
           <p>
-            Я создаю UGC, который естественно выглядит в ленте и помогает
-            зрителю представить продукт в реальной жизни.
+            {text(about.text, "Я создаю UGC, который естественно выглядит в ленте и помогает зрителю представить продукт в реальной жизни.")}
           </p>
+          {aboutImage && (
+            <img className="about-image" src={aboutImage} alt="" />
+          )}
         </div>
       </section>
 
       <section className="contact" id="contact">
         <p className="eyebrow">LET'S WORK TOGETHER</p>
-        <h2>Есть продукт?<br /><em>Давайте снимем.</em></h2>
-        <a className="contact-link" href="mailto:hello@example.com">hello@example.com ↗</a>
+        <h2>{first(contact.title, "Есть продукт? Давайте снимем.")}</h2>
+        <a className="contact-link" href={`mailto:${contactEmail}`}>
+          {contactEmail} ↗
+        </a>
       </section>
 
       <footer>
-        <span>YULIANA © 2026</span>
-        <span>UGC · CONTENT · REVIEWS</span>
+        <span>{first(footer.text, "YULIANA © 2026")}</span>
+        <span>{Array.isArray(footer.text) ? footer.text[1] : "UGC · CONTENT · REVIEWS"}</span>
       </footer>
     </main>
   );
