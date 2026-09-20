@@ -20,37 +20,49 @@ async function getProjects() {
     .map((page) => {
       const properties = page.properties || {};
 
-      const read = (names) => {
-        for (const name of names) {
-          const property = properties[name];
-          if (!property) continue;
+      const textProperty = (property) => {
+        if (!property) return "";
 
-          if (property.type === "title") {
-            return property.title?.map((item) => item.plain_text || "").join("") || "";
-          }
+        if (property.type === "title") {
+          return property.title?.map((item) => item.plain_text || "").join("") || "";
+        }
 
-          if (property.type === "rich_text") {
-            return property.rich_text?.map((item) => item.plain_text || "").join("") || "";
-          }
+        if (property.type === "rich_text") {
+          return property.rich_text?.map((item) => item.plain_text || "").join("") || "";
+        }
 
-          if (property.type === "url") return property.url || "";
-
-          if (property.type === "select") return property.select?.name || "";
-
-          if (property.type === "multi_select") {
-            return property.multi_select?.map((item) => item.name).join(", ") || "";
-          }
+        if (property.type === "url") return property.url || "";
+        if (property.type === "select") return property.select?.name || "";
+        if (property.type === "multi_select") {
+          return property.multi_select?.map((item) => item.name).join(", ") || "";
         }
 
         return "";
       };
 
+      const mediaUrl = (property) => {
+        if (!property || property.type !== "files") return "";
+
+        const file = property.files?.[0];
+        if (!file) return "";
+
+        // Notion files can contain either an uploaded file or an external URL.
+        return file.external?.url || file.file?.url || "";
+      };
+
+      const title = textProperty(properties["Название"]);
+      const platform = textProperty(properties["Платформа"]);
+      const link = textProperty(properties["Ссылка"]);
+      const media = mediaUrl(properties["File & media"]);
+
+      // For each project either "Ссылка" or "File & media" can contain the video URL.
+      const video = link || media;
+
       return {
         id: page.id,
-        title: read(["Name", "Название", "Title", "Проект"]),
-        category: read(["Category", "Категория", "Type", "Тип"]),
-        description: read(["Description", "Описание", "Text", "Текст"]),
-        video: read(["Video", "Видео", "URL", "Url", "Link", "Ссылка"]),
+        title,
+        platform,
+        video,
       };
     })
     .filter((project) => project.video);
@@ -101,9 +113,9 @@ export default async function Home() {
               <article className={`card card-${(index % 3) + 1}`} key={project.id}>
                 <VideoEmbed url={project.video} />
                 <div className="card-info">
-                  {project.category && <span>{project.category}</span>}
+                  {project.platform && <span>{project.platform}</span>}
                   <h3>{project.title || "UGC project"}</h3>
-                  {project.description && <p>{project.description}</p>}
+                  
                 </div>
               </article>
             ))}
