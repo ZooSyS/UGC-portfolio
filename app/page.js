@@ -1,23 +1,6 @@
-export const dynamic = "force-dynamic";
-
 import VideoEmbed from "../components/VideoEmbed";
 
-async function getSiteData() {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
-  const response = await fetch(`${baseUrl}/api/notion`, {
-    next: { revalidate: 60 },
-  });
-
-  if (!response.ok) {
-    console.error("Notion API error:", await response.text());
-    return { projects: [], content: {} };
-  }
-
-  return response.json();
-}
+import { getSiteData } from "../lib/notion";
 
 function first(value, fallback = "") {
   if (Array.isArray(value)) return value[0] || fallback;
