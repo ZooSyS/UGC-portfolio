@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import VideoEmbed from "../components/VideoEmbed";
 
 async function getSiteData() {
