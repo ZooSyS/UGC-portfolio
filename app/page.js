@@ -40,23 +40,9 @@ async function getProjects() {
         return "";
       };
 
-      const mediaUrl = (property) => {
-        if (!property || property.type !== "files") return "";
-
-        const file = property.files?.[0];
-        if (!file) return "";
-
-        // Notion files can contain either an uploaded file or an external URL.
-        return file.external?.url || file.file?.url || "";
-      };
-
       const title = textProperty(properties["Название"]);
       const platform = textProperty(properties["Платформа"]);
-      const link = textProperty(properties["Ссылка"]);
-      const media = mediaUrl(properties["File & media"]);
-
-      // For each project either "Ссылка" or "File & media" can contain the video URL.
-      const video = link || media;
+      const video = textProperty(properties["Ссылка"]);
 
       return {
         id: page.id,
@@ -115,7 +101,6 @@ export default async function Home() {
                 <div className="card-info">
                   {project.platform && <span>{project.platform}</span>}
                   <h3>{project.title || "UGC project"}</h3>
-                  
                 </div>
               </article>
             ))}
