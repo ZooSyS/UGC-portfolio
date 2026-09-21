@@ -47,7 +47,7 @@ export default function HeroExperience({
     };
 
     update();
-    requestAnimationFrame(() => hero.classList.add("hero-ready"));
+    requestAnimationFrame(() => requestAnimationFrame(() => hero.classList.add("hero-ready")));
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
 
