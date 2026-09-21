@@ -107,6 +107,7 @@ export default function VideoEmbed({ platform, url }) {
         container.className = "video-frame telegram-video-frame";
         if (telegramMedia.aspectRatio) {
           container.style.aspectRatio = String(telegramMedia.aspectRatio);
+          container.dataset.orientation = telegramMedia.aspectRatio > 1.15 ? "landscape" : "portrait";
         } else if (telegramMedia.width && telegramMedia.height) {
           container.style.aspectRatio = `${telegramMedia.width} / ${telegramMedia.height}`;
         }
