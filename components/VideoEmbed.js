@@ -12,13 +12,14 @@ function normalizeTelegramUrl(url) {
 export default function VideoEmbed({ platform, url }) {
   const containerRef = useRef(null);
   const [telegramMedia, setTelegramMedia] = useState(null);
+  const [instagramReady, setInstagramReady] = useState(false);
 
   useEffect(() => {
     if (platform !== "Telegram" || !url) return;
 
     let cancelled = false;
 
-    fetch(`/api/telegram-media?url=${encodeURIComponent(normalizeTelegramUrl(url))}`)
+    fetch(`/api/telegram-media?url=${encodeURIComponent(normalizeTelegramUrl(url))}`, { signal: AbortSignal.timeout(12000) })
       .then((response) => {
         if (!response.ok) throw new Error("Telegram media request failed");
         return response.json();
@@ -69,6 +70,7 @@ export default function VideoEmbed({ platform, url }) {
     // INSTAGRAM
     if (platform === "Instagram") {
       container.className = "instagram-frame";
+      container.dataset.loading = "true";
       const blockquote = document.createElement("blockquote");
       blockquote.className = "instagram-media";
       blockquote.setAttribute("data-instgrm-permalink", url);
@@ -79,7 +81,11 @@ export default function VideoEmbed({ platform, url }) {
       container.appendChild(blockquote);
 
       const existing = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
-      const process = () => window.instgrm?.Embeds?.process?.();
+      const process = () => {
+        window.instgrm?.Embeds?.process?.();
+        setInstagramReady(true);
+        container.dataset.loading = "false";
+      };
 
       if (existing) {
         if (window.instgrm) process();
@@ -90,6 +96,13 @@ export default function VideoEmbed({ platform, url }) {
         script.src = "https://www.instagram.com/embed.js";
         script.onload = process;
         document.body.appendChild(script);
+      }
+
+      window.setTimeout(() => {
+        if (!container.querySelector("iframe")) {
+          process();
+        }
+      }, 5000);
       }
       return;
     }
