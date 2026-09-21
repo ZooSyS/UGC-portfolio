@@ -10,6 +10,7 @@ export default function HeroExperience({
 }) {
   const heroRef = useRef(null);
   const titleRef = useRef(null);
+  const introRef = useRef(null);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -30,7 +31,7 @@ export default function HeroExperience({
         const rectTitle = title.getBoundingClientRect();
         title.style.setProperty("--morph-x", `${window.innerWidth * 0.05 - rectTitle.left}px`);
         title.style.setProperty("--morph-y", `${28 - rectTitle.top}px`);
-        title.style.setProperty("--morph-scale", (18 / Math.max(rectTitle.height, 1)).toFixed(4));
+        title.style.setProperty("--morph-scale", (100 / Math.max(rectTitle.width, 1)).toFixed(4));
       }
     };
 
@@ -39,6 +40,7 @@ export default function HeroExperience({
     };
 
     update();
+    requestAnimationFrame(() => hero.classList.add("hero-ready"));
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
 
