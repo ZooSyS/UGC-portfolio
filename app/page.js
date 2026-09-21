@@ -13,6 +13,16 @@ function text(value, fallback = "") {
   return value || fallback;
 }
 
+function ServiceIcon({ index }) {
+  const icons = [
+    <><circle cx="12" cy="12" r="7"/><path d="M12 5v14M5 12h14"/></>,
+    <><rect x="5" y="5" width="14" height="14" rx="2"/><path d="m8 15 3-4 2 2 2-3"/></>,
+    <><path d="M7 4h10v16H7z"/><path d="M9 7h6M9 10h6M9 13h3"/></>,
+    <><path d="M5 7h14v10H5z"/><path d="m10 10 5 2-5 2z"/></>,
+  ];
+  return <svg className="service-icon" viewBox="0 0 24 24" aria-hidden="true">{icons[index % icons.length]}</svg>;
+}
+
 export default async function Home() {
   const { projects: notionProjects = [], content = {} } = await getSiteData();
 
@@ -93,6 +103,7 @@ export default async function Home() {
           <div className="grid">
             {projects.map((project, index) => (
               <article className={`card card-${(index % 3) + 1}`} key={project.id}>
+                <div className="card-mark" aria-hidden="true"><span>{String(index + 1).padStart(2, "0")}</span><i /></div>
                 <VideoEmbed platform={project.platform} url={project.video} />
                 <div className="card-info">
                   {project.platform && <span>{project.platform}</span>}
@@ -125,7 +136,7 @@ export default async function Home() {
         <div className="service-content">
           <p className="eyebrow">FORMATS</p>
           <h2>Форматы работы</h2>
-          {formats.length > 0 && <div className="service-list">{formats.map((item, index) => <div className="service-item" key={index}>{item}</div>)}</div>}
+          {formats.length > 0 && <div className="service-list">{formats.map((item, index) => <div className="service-item" key={index}><ServiceIcon index={index} /><span>{item}</span><b>↗</b></div>)}</div>}
         </div>
       </section>
 
