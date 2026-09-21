@@ -11,7 +11,6 @@ export default function HeroExperience({
   const heroRef = useRef(null);
   const titleRef = useRef(null);
   const morphRef = useRef({ x: 0, y: 0, scale: 0.12 });
-  const introRef = useRef(null);
 
   useEffect(() => {
     const hero = heroRef.current;
