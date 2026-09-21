@@ -49,24 +49,25 @@ export async function GET(request) {
 
     const html = await response.text();
 
-    const messageId = telegramUrl.split("/").pop();
-    const messagePattern = new RegExp(
-      `<div[^>]+class=["'][^"']*tgme_widget_message_wrap[^"']*["'][\\s\\S]*?<a[^>]+href=["']https?:\\/\\/t\\.me\\/[^"']*\\/${messageId}["'][\\s\\S]*?<\\/div>`,
-      "i"
-    );
+    // Telegram exposes public video posts as a dedicated video wrapper.
+    // Extract that wrapper first, then read the media URL without relying
+    // on the order of attributes inside the <video> tag.
+    const videoWrap = html.match(
+      /<div[^>]+class=["'][^"']*tgme_widget_message_video_wrap[^"']*["'][^>]*>[\\s\\S]*?<\\/div>/i
+    )?.[0];
 
-    const messageHtml = html.match(messagePattern)?.[0] || html;
+    const videoTag = videoWrap?.match(/<video\\b[^>]*>/i)?.[0];
 
     const video =
-      messageHtml.match(/<video[^>]+(?:src|data-src)=["']([^"']+)["']/i)?.[1] ||
-      messageHtml.match(/<source[^>]+src=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\\bsrc=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\\bdata-src=["']([^"']+)["']/i)?.[1] ||
+      videoWrap?.match(/<source[^>]+\\bsrc=["']([^"']+)["']/i)?.[1] ||
       null;
 
-    // Telegram often stores the preview image as a CSS background.
-    // Keep this regex deliberately simple to avoid escaping issues.
+    // Telegram may expose a poster either as a CSS background or a poster attribute.
     const posterStyle =
-      messageHtml.match(/background-image:\s*url\(['"]?([^)'"]+)/i)?.[1] ||
-      messageHtml.match(/poster=["']([^"']+)["']/i)?.[1] ||
+      videoWrap?.match(/background-image:\\s*url\\(['"]?([^)'"]+)/i)?.[1] ||
+      videoTag?.match(/\\bposter=["']([^"']+)["']/i)?.[1] ||
       null;
 
     if (!video) {
