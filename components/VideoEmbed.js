@@ -6,7 +6,7 @@ function InstagramEmbed({ url }) {
   const ref = useRef(null);
 
   useEffect(() => {
-    const render = () => window.instgrm?.Embeds?.process();
+    const render = () => window.instgrm?.Embeds?.process(ref.current);
     if (!document.querySelector('script[src="https://www.instagram.com/embed.js"]')) {
       const script = document.createElement("script");
       script.src = "https://www.instagram.com/embed.js";
@@ -19,7 +19,7 @@ function InstagramEmbed({ url }) {
   }, [url]);
 
   return (
-    <div className="video-frame instagram-frame" ref={ref}>
+    <div className="instagram-frame" ref={ref}>
       <blockquote
         className="instagram-media"
         data-instgrm-permalink={url}
