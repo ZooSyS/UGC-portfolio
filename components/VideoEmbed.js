@@ -2,61 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-function InstagramEmbed({ url }) {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const render = () => window.instgrm?.Embeds?.process(ref.current);
-    if (!document.querySelector('script[src="https://www.instagram.com/embed.js"]')) {
-      const script = document.createElement("script");
-      script.src = "https://www.instagram.com/embed.js";
-      script.async = true;
-      script.onload = render;
-      document.body.appendChild(script);
-    } else {
-      render();
-    }
-  }, [url]);
-
-  return (
-    <div className="instagram-frame" ref={ref}>
-      <blockquote
-        className="instagram-media"
-        data-instgrm-permalink={url}
-        data-instgrm-version="14"
-      />
-    </div>
-  );
-}
-
-function YouTubeEmbed({ url }) {
-  try {
-    const parsed = new URL(url);
-    let videoId = parsed.searchParams.get("v");
-
-    if (!videoId && parsed.hostname.includes("youtu.be")) {
-      videoId = parsed.pathname.slice(1);
-    }
-
-    if (!videoId) return null;
-
-    return (
-      <div className="video-frame">
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}`}
-          title="UGC video"
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        />
-      </div>
-    );
-  } catch {
-    return null;
-  }
-}
-
-function TelegramEmbed({ url }) {
+export default function VideoEmbed({ platform, url }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -65,47 +11,115 @@ function TelegramEmbed({ url }) {
     const container = containerRef.current;
     container.innerHTML = "";
 
-    let cleanUrl = url
-      .replace(/^https?:\/\/t\.me\//, "")
-      .split("?")[0];
+    // TELEGRAM
+    if (platform === "Telegram") {
+      let cleanUrl = url
+        .replace(/^https?:\/\/t\.me\//, "")
+        .split("?")[0];
 
-    const parts = cleanUrl.split("/");
+      const parts = cleanUrl.split("/");
 
-    if (parts.length === 3) {
-      cleanUrl = parts[0] + "/" + parts[2];
+      // Telegram forum link:
+      // yuliana_m_portfolio/5/6
+      // превращаем в:
+      // yuliana_m_portfolio/6
+      if (parts.length === 3) {
+        cleanUrl = parts[0] + "/" + parts[2];
+      }
+
+      const script = document.createElement("script");
+
+      script.async = true;
+      script.src = "https://telegram.org/js/telegram-widget.js?24";
+      script.setAttribute("data-telegram-post", cleanUrl);
+      script.setAttribute("data-width", "100%");
+      script.setAttribute("data-userpic", "false");
+
+      container.appendChild(script);
+
+      return;
     }
 
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = "https://telegram.org/js/telegram-widget.js?24";
-    script.setAttribute("data-telegram-post", cleanUrl);
-    script.setAttribute("data-width", "100%");
-    script.setAttribute("data-userpic", "false");
+    // INSTAGRAM
+    if (platform === "Instagram") {
+      const blockquote = document.createElement("blockquote");
 
-    container.appendChild(script);
-  }, [url]);
+      blockquote.className = "instagram-media";
+      blockquote.setAttribute("data-instgrm-permalink", url);
+      blockquote.setAttribute("data-instgrm-version", "14");
 
-  return <div ref={containerRef} className="telegram-frame" />;
-}
+      blockquote.style.width = "100%";
+      blockquote.style.minWidth = "0";
+      blockquote.style.margin = "0";
 
-export default function VideoEmbed({ url }) {
-  if (!url) return null;
+      container.appendChild(blockquote);
 
-  if (/instagram\.com\//i.test(url)) {
-    return <InstagramEmbed url={url} />;
-  }
+      const script = document.createElement("script");
 
-  if (/youtube\.com\/|youtu\.be\//i.test(url)) {
-    return <YouTubeEmbed url={url} />;
-  }
+      script.async = true;
+      script.src = "https://www.instagram.com/embed.js";
 
-  if (/(^https?:\/\/)?(www\.)?t\.me\//i.test(url) || /telegram\.me\//i.test(url)) {
-    return <TelegramEmbed url={url} />;
-  }
+      script.onload = function () {
+        if (window.instgrm) {
+          window.instgrm.Embeds.process();
+        }
+      };
+
+      document.body.appendChild(script);
+
+      return;
+    }
+
+    // YOUTUBE
+    if (platform === "YouTube" || /youtube\.com\/|youtu\.be\//i.test(url)) {
+      try {
+        const parsed = new URL(url);
+        let videoId = parsed.searchParams.get("v");
+
+        if (!videoId && parsed.hostname.includes("youtu.be")) {
+          videoId = parsed.pathname.slice(1);
+        }
+
+        if (!videoId) return;
+
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        iframe.title = "UGC video";
+        iframe.loading = "lazy";
+        iframe.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.allowFullscreen = true;
+
+        const frame = document.createElement("div");
+        frame.className = "video-frame";
+        frame.appendChild(iframe);
+        container.appendChild(frame);
+      } catch {
+        return;
+      }
+
+      return;
+    }
+
+    // OTHER
+    const video = document.createElement("video");
+    video.src = url;
+    video.controls = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+
+    const frame = document.createElement("div");
+    frame.className = "video-frame";
+    frame.appendChild(video);
+    container.appendChild(frame);
+  }, [platform, url]);
 
   return (
-    <div className="video-frame">
-      <video src={url} controls playsInline preload="metadata" />
-    </div>
+    <div
+      ref={containerRef}
+      style={{
+        width: "100%",
+      }}
+    />
   );
 }
