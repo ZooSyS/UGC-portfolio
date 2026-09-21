@@ -59,10 +59,10 @@ nav a:hover { opacity: 1; }
   font-weight: 500;
   transform-origin: left top;
   transform: translate3d(
-    calc((1 - var(--hero-progress)) * var(--intro-x, -90px) + var(--hero-progress) * var(--morph-x, 0px)),
-    calc(var(--hero-progress) * var(--morph-y, 0px)),
+    calc((1 - var(--hero-morph)) * var(--intro-x, -90px) + var(--hero-morph) * var(--morph-x, 0px)),
+    calc(var(--hero-morph) * var(--morph-y, 0px)),
     0
-  ) scale(calc(1 - var(--hero-progress) * (1 - var(--morph-scale, .12))));
+  ) scale(calc(1 - var(--hero-morph) * (1 - var(--morph-scale, .12))));
   opacity: calc(1 - var(--hero-progress));
   transition: transform .06s linear, opacity .06s linear;
 }
