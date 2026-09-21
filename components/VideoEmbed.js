@@ -10,6 +10,7 @@ export default function VideoEmbed({ platform, url }) {
 
     const container = containerRef.current;
     container.innerHTML = "";
+    container.className = platform === "Telegram" ? "telegram-frame" : platform === "Instagram" ? "instagram-frame" : "";
 
     // TELEGRAM
     if (platform === "Telegram") {
