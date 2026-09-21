@@ -222,6 +222,7 @@ footer { padding: 28px 5vw; border-top: 1px solid var(--line); display: flex; ju
   nav a:not(.nav-cta) { display: none; }
   .hero { min-height: 92vh; padding: 18vw 7vw 12vw; }
   .hero-copy { max-width: 48%; }
+  .hero-eyebrow { white-space: nowrap; transform: translate3d(0, calc(var(--hero-progress) * 62vh - 14vh), 0); }
   .hero-title { font-size: clamp(58px, 18vw, 105px); }
   .hero-title-intro { transform: translate3d(-55px, 0, 0); }
   .hero-text { margin-left: 0; font-size: 14px; }
