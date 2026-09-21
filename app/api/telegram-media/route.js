@@ -61,6 +61,17 @@ export async function GET(request) {
     const width = videoTag?.match(/\bwidth=["'](\d+(?:\.\d+)?)["']/i)?.[1] || null;
     const height = videoTag?.match(/\bheight=["'](\d+(?:\.\d+)?)["']/i)?.[1] || null;
 
+    const videoWrap = html.match(
+      /<div\b[^>]*class=["'][^"']*tgme_widget_message_video_wrap[^"']*["'][^>]*>/i
+    )?.[0] || null;
+    const paddingTop = videoWrap?.match(/padding-top:\s*([\d.]+)%/i)?.[1] || null;
+    const aspectRatio =
+      width && height
+        ? Number(width) / Number(height)
+        : paddingTop
+          ? 100 / Number(paddingTop)
+          : null;
+
     const posterStyle =
       videoTag?.match(/\bposter=["']([^"']+)["']/i)?.[1] ||
       html.match(/<meta[^>]+property=["'](?:og:image|twitter:image)["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
@@ -98,6 +109,7 @@ export async function GET(request) {
         poster: posterStyle ? decodeHtml(posterStyle) : null,
         width: width ? Number(width) : null,
         height: height ? Number(height) : null,
+        aspectRatio,
       },
       {
         headers: {
