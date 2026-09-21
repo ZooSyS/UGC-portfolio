@@ -28,7 +28,12 @@ export default function HeroExperience({
       hero.style.setProperty("--hero-morph", Math.min(1, Math.max(0, (progress - 0.04) / 0.72)).toFixed(3));
       document.documentElement.style.setProperty("--hero-progress", progress.toFixed(3));
       const title = titleRef.current;
-      if (title && !morphRef.current.ready) {
+      const intro = title?.parentElement;
+      if (title && intro && !morphRef.current.ready) {
+        const previousTransition = intro.style.transition;
+        const previousTransform = intro.style.transform;
+        intro.style.transition = "none";
+        intro.style.transform = "translate3d(0, 0, 0)";
         const rectTitle = title.getBoundingClientRect();
         morphRef.current = {
           ready: true,
@@ -39,6 +44,8 @@ export default function HeroExperience({
         title.style.setProperty("--morph-x", morphRef.current.x + "px");
         title.style.setProperty("--morph-y", morphRef.current.y + "px");
         title.style.setProperty("--morph-scale", morphRef.current.scale.toFixed(4));
+        intro.style.transform = previousTransform;
+        intro.style.transition = previousTransition;
       }
     };
 
