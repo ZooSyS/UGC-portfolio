@@ -105,7 +105,9 @@ export default function VideoEmbed({ platform, url }) {
 
       if (telegramMedia.video) {
         container.className = "video-frame telegram-video-frame";
-        if (telegramMedia.width && telegramMedia.height) {
+        if (telegramMedia.aspectRatio) {
+          container.style.aspectRatio = String(telegramMedia.aspectRatio);
+        } else if (telegramMedia.width && telegramMedia.height) {
           container.style.aspectRatio = `${telegramMedia.width} / ${telegramMedia.height}`;
         }
         const video = document.createElement("video");
@@ -115,28 +117,26 @@ export default function VideoEmbed({ platform, url }) {
         video.preload = "metadata";
         if (telegramMedia.poster) video.poster = telegramMedia.poster;
 
-        if (telegramMedia.poster) {
-          const preview = document.createElement("img");
-          preview.src = `/api/telegram-poster?url=${encodeURIComponent(normalizeTelegramUrl(url))}`;
-          preview.alt = "";
-          preview.className = "telegram-preview";
-          preview.addEventListener("error", () => {
-            preview.remove();
-          });
+        const preview = document.createElement("img");
+        preview.src = `/api/telegram-poster?url=${encodeURIComponent(normalizeTelegramUrl(url))}`;
+        preview.alt = "";
+        preview.className = "telegram-preview";
+        preview.addEventListener("error", () => {
+          preview.remove();
+        });
 
-          preview.addEventListener("click", () => {
-            video.play().catch(() => {});
-          });
+        preview.addEventListener("click", () => {
+          video.play().catch(() => {});
+        });
 
-          video.addEventListener("play", () => {
-            preview.classList.add("is-hidden");
-          });
-          video.addEventListener("pause", () => {
-            if (video.currentTime === 0) preview.classList.remove("is-hidden");
-          });
+        video.addEventListener("play", () => {
+          preview.classList.add("is-hidden");
+        });
+        video.addEventListener("pause", () => {
+          if (video.currentTime === 0) preview.classList.remove("is-hidden");
+        });
 
-          container.appendChild(preview);
-        }
+        container.appendChild(preview);
 
         container.appendChild(video);
         return;
