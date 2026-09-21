@@ -13,10 +13,7 @@ export default function HeroExperience({ title, text, button, image }) {
 
     const update = () => {
       frame = 0;
-      const rect = hero.getBoundingClientRect();
-      const travel = Math.max(hero.offsetHeight * 0.7, window.innerHeight * 0.7);
-      const progress = Math.min(1, Math.max(0, -rect.top / travel));
-      hero.style.setProperty("--hero-progress", progress.toFixed(3));
+      hero.style.setProperty("--hero-progress", "0");
     };
 
     const onScroll = () => {
