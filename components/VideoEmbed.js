@@ -124,6 +124,10 @@ export default function VideoEmbed({ platform, url }) {
             preview.remove();
           });
 
+          preview.addEventListener("click", () => {
+            video.play().catch(() => {});
+          });
+
           video.addEventListener("play", () => {
             preview.classList.add("is-hidden");
           });
