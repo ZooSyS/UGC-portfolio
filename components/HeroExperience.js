@@ -9,6 +9,7 @@ export default function HeroExperience({
   image,
 }) {
   const heroRef = useRef(null);
+  const titleRef = useRef(null);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -24,6 +25,13 @@ export default function HeroExperience({
 
       hero.style.setProperty("--hero-progress", progress.toFixed(3));
       document.documentElement.style.setProperty("--hero-progress", progress.toFixed(3));
+      const title = titleRef.current;
+      if (title) {
+        const rectTitle = title.getBoundingClientRect();
+        title.style.setProperty("--morph-x", `${window.innerWidth * 0.05 - rectTitle.left}px`);
+        title.style.setProperty("--morph-y", `${28 - rectTitle.top}px`);
+        title.style.setProperty("--morph-scale", (18 / Math.max(rectTitle.height, 1)).toFixed(4));
+      }
     };
 
     const onScroll = () => {
@@ -45,7 +53,7 @@ export default function HeroExperience({
     <section className="hero" id="top" ref={heroRef}>
       <div className="hero-copy">
         <p className="eyebrow hero-eyebrow">UGC CREATOR · CONTENT · REVIEWS</p>
-        <h1 className="hero-title">
+        <h1 ref={titleRef} className="hero-title">
           {title || "Контент, которому верят."}
         </h1>
         <p className="hero-text">
