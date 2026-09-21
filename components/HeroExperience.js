@@ -62,9 +62,11 @@ export default function HeroExperience({
     <section className="hero" id="top" ref={heroRef}>
       <div className="hero-copy">
         <p className="eyebrow hero-eyebrow">UGC CREATOR · CONTENT · REVIEWS</p>
-        <h1 ref={titleRef} className="hero-title">
-          {title || "Контент, которому верят."}
-        </h1>
+        <div className="hero-title-intro">
+          <h1 ref={titleRef} className="hero-title">
+            {title || "Контент, которому верят."}
+          </h1>
+        </div>
         <p className="hero-text">
           {text || "Создаю живые видео для брендов — от распаковок и обзоров до нативных lifestyle-сюжетов."}
         </p>
