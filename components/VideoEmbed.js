@@ -114,6 +114,26 @@ export default function VideoEmbed({ platform, url }) {
         video.playsInline = true;
         video.preload = "metadata";
         if (telegramMedia.poster) video.poster = telegramMedia.poster;
+
+        if (telegramMedia.poster) {
+          const preview = document.createElement("img");
+          preview.src = telegramMedia.poster;
+          preview.alt = "";
+          preview.className = "telegram-preview";
+          preview.addEventListener("error", () => {
+            preview.remove();
+          });
+
+          video.addEventListener("play", () => {
+            preview.classList.add("is-hidden");
+          });
+          video.addEventListener("pause", () => {
+            if (video.currentTime === 0) preview.classList.remove("is-hidden");
+          });
+
+          container.appendChild(preview);
+        }
+
         container.appendChild(video);
         return;
       }
