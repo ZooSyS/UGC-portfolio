@@ -61,9 +61,10 @@ function TelegramEmbed({ url }) {
     try {
       const value = new URL(url);
       const parts = value.pathname.split("/").filter(Boolean);
+      const isForumMessage = parts.length >= 3 && /^\\d+$/.test(parts[1]) && /^\\d+$/.test(parts[2]);
       return {
         username: parts[0] || "",
-        messageId: parts[1] || "",
+        messageId: isForumMessage ? parts[2] : parts[1] || "",
       };
     } catch {
       return { username: "", messageId: "" };
