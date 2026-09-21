@@ -53,21 +53,21 @@ export async function GET(request) {
     // Extract that wrapper first, then read the media URL without relying
     // on the order of attributes inside the <video> tag.
     const videoWrap = html.match(
-      /<div[^>]+class=["'][^"']*tgme_widget_message_video_wrap[^"']*["'][^>]*>[\\s\\S]*?<\\/div>/i
+      /<div[^>]+class=["'][^"']*tgme_widget_message_video_wrap[^"']*["'][^>]*>[\s\\S]*?<\\/div>/i
     )?.[0];
 
-    const videoTag = videoWrap?.match(/<video\\b[^>]*>/i)?.[0];
+    const videoTag = videoWrap?.match(/<video\b[^>]*>/i)?.[0];
 
     const video =
-      videoTag?.match(/\\bsrc=["']([^"']+)["']/i)?.[1] ||
-      videoTag?.match(/\\bdata-src=["']([^"']+)["']/i)?.[1] ||
-      videoWrap?.match(/<source[^>]+\\bsrc=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\bsrc=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\bdata-src=["']([^"']+)["']/i)?.[1] ||
+      videoWrap?.match(/<source[^>]+\bsrc=["']([^"']+)["']/i)?.[1] ||
       null;
 
     // Telegram may expose a poster either as a CSS background or a poster attribute.
     const posterStyle =
-      videoWrap?.match(/background-image:\\s*url\\(['"]?([^)'"]+)/i)?.[1] ||
-      videoTag?.match(/\\bposter=["']([^"']+)["']/i)?.[1] ||
+      videoWrap?.match(/background-image:\s*url\\(['"]?([^)'"]+)/i)?.[1] ||
+      videoTag?.match(/\bposter=["']([^"']+)["']/i)?.[1] ||
       null;
 
     if (!video) {
