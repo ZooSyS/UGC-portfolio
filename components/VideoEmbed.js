@@ -57,47 +57,35 @@ function YouTubeEmbed({ url }) {
 }
 
 function TelegramEmbed({ url }) {
-  const parsed = (() => {
-    try {
-      const value = new URL(url);
-      const parts = value.pathname.split("/").filter(Boolean);
-      const isForumMessage = parts.length >= 3 && /^\\d+$/.test(parts[1]) && /^\\d+$/.test(parts[2]);
-      return {
-        username: parts[0] || "",
-        messageId: isForumMessage ? parts[2] : parts[1] || "",
-      };
-    } catch {
-      return { username: "", messageId: "" };
-    }
-  })();
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    if (!parsed.username || !parsed.messageId) return;
+    if (!containerRef.current || !url) return;
 
-    const container = document.getElementById(
-      `telegram-embed-${parsed.username}-${parsed.messageId}`
-    );
-    if (!container) return;
-
+    const container = containerRef.current;
     container.innerHTML = "";
+
+    let cleanUrl = url
+      .replace(/^https?:\/\/t\.me\//, "")
+      .split("?")[0];
+
+    const parts = cleanUrl.split("/");
+
+    if (parts.length === 3) {
+      cleanUrl = parts[0] + "/" + parts[2];
+    }
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = "https://telegram.org/js/telegram-widget.js?22";
-    script.setAttribute("data-telegram-post", `${parsed.username}/${parsed.messageId}`);
+    script.src = "https://telegram.org/js/telegram-widget.js?24";
+    script.setAttribute("data-telegram-post", cleanUrl);
     script.setAttribute("data-width", "100%");
     script.setAttribute("data-userpic", "false");
+
     container.appendChild(script);
-  }, [parsed.username, parsed.messageId]);
+  }, [url]);
 
-  if (!parsed.username || !parsed.messageId) return null;
-
-  return (
-    <div
-      id={`telegram-embed-${parsed.username}-${parsed.messageId}`}
-      className="telegram-frame"
-    />
-  );
+  return <div ref={containerRef} className="telegram-frame" />;
 }
 
 export default function VideoEmbed({ url }) {
