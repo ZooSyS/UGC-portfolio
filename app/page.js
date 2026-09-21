@@ -82,7 +82,6 @@ export default async function Home() {
             <p className="eyebrow">SELECTED WORK</p>
             <h2>Последние работы</h2>
           </div>
-          <p className="section-note">Видео берутся из Notion</p>
         </div>
 
         {projects.length > 0 ? (
