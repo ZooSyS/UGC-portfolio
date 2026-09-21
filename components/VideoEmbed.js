@@ -105,6 +105,9 @@ export default function VideoEmbed({ platform, url }) {
 
       if (telegramMedia.video) {
         container.className = "video-frame telegram-video-frame";
+        if (telegramMedia.width && telegramMedia.height) {
+          container.style.aspectRatio = `${telegramMedia.width} / ${telegramMedia.height}`;
+        }
         const video = document.createElement("video");
         video.src = telegramMedia.video;
         video.controls = true;
