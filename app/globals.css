@@ -6,6 +6,7 @@
   --muted: #77736d;
   --line: rgba(23, 22, 20, .14);
   --accent: #d96f4f;
+  --hero-progress: 0;
 }
 
 * { box-sizing: border-box; }
@@ -27,7 +28,14 @@ main { overflow: hidden; }
   justify-content: space-between;
   border-bottom: 1px solid var(--line);
 }
-.brand { font-size: 18px;\n  opacity: calc(.08 + var(--hero-progress) * .92);\n  transform: translateY(calc((1 - var(--hero-progress)) * 8px));\n  transition: opacity .35s, transform .45s; font-weight: 600; letter-spacing: .08em; }
+.brand {
+  font-size: 18px;
+  opacity: calc(.08 + var(--hero-progress) * .92);
+  transform: translateY(calc((1 - var(--hero-progress)) * 8px));
+  transition: opacity .35s, transform .45s;
+  font-weight: 600;
+  letter-spacing: .08em;
+}
 .brand span { color: var(--accent); }
 nav { display: flex; align-items: center; gap: 32px; font-size: 13px; }
 nav a { opacity: .72; transition: opacity .2s; }
