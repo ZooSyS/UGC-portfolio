@@ -66,8 +66,9 @@ nav a:hover { opacity: 1; }
   opacity: calc(1 - var(--hero-progress));
   transition: transform .06s linear, opacity .06s linear;
 }
-.hero-title-intro {
-  transform: translate3d(-90px, 0, 0);
+ .hero-title-intro {
+  width: max-content;
+  transform: translate3d(-120vw, 0, 0);
   transition: transform 1.45s cubic-bezier(.16,.72,.18,1);
   will-change: transform;
 }
@@ -138,12 +139,14 @@ h1 em, h2 em { font-family: "Playfair Display", Georgia, serif; font-weight: 500
 .section-head { display: flex; justify-content: space-between; align-items: end; margin-bottom: 55px; }
 .section-head h2, .about h2, .contact h2 { margin: 0; font-size: clamp(42px, 6vw, 86px); line-height: .95; letter-spacing: -.055em; font-weight: 500; }
 .section-note { margin: 0; color: var(--muted); font-size: 12px; }
-.grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; }
-.card { grid-column: span 2; min-width: 0; min-height: 0; }
+ .grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.card { grid-column: span 1; min-width: 0; min-height: 0; width: 100%; position: relative; }
 .video-frame { width: 100%; aspect-ratio: 9 / 16; background: #e6e1da; overflow: hidden; border-radius: 2px; }
 .video-frame iframe, .video-frame video { width: 100%; height: 100%; border: 0; display: block; object-fit: cover; }
  .instagram-frame {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   background: transparent;
   aspect-ratio: auto;
@@ -159,18 +162,39 @@ h1 em, h2 em { font-family: "Playfair Display", Georgia, serif; font-weight: 500
   background: transparent !important;
 }
 .telegram-frame {
+  display: block;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: 0;
   background: transparent;
-  overflow: visible;
+  overflow: hidden;
 }
 .telegram-frame iframe {
-  display: block;
+  display: block !important;
   width: 100% !important;
+  min-width: 0 !important;
   max-width: 100% !important;
   border: 0;
 }
 
+ .section-number {
+  margin-bottom: 34px;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: var(--muted);
+}
+.service-section {
+  padding: 10vw 15vw;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 5vw;
+  border-top: 1px solid var(--line);
+}
+.service-content h2 { margin: 0 0 55px; font-size: clamp(42px, 6vw, 86px); line-height: .95; letter-spacing: -.055em; font-weight: 500; }
+.service-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.service-item { padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 17px; }
+.contact-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 28px; }
 .card-info { padding: 17px 0 0; }
 .card-info > span { color: var(--accent); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; }
 .card-info h3 { margin: 8px 0 7px; font-size: 17px; font-weight: 500; letter-spacing: -.03em; }
@@ -206,6 +230,12 @@ footer { padding: 28px 5vw; border-top: 1px solid var(--line); display: flex; ju
   .hero-note { margin-top: 70px; align-self: flex-start; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .card { grid-column: span 1; margin-top: 0; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .section-number { margin-bottom: 24px; }
+  .service-section { padding: 18vw 7vw; grid-template-columns: 1fr; gap: 35px; }
+  .service-content h2 { margin-bottom: 38px; }
+  .service-list { grid-template-columns: 1fr; }
+  .contact-links { flex-direction: column; align-items: center; gap: 18px; }
   .card-info { padding-top: 10px; }
   .card-info h3 { font-size: 15px; }
   .video-frame { aspect-ratio: 9 / 16; }
