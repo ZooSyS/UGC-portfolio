@@ -2,11 +2,64 @@
 
 import { useEffect, useRef, useState } from "react";
 
+let instagramEmbedPromise = null;
+
 function normalizeTelegramUrl(url) {
   const clean = url.replace(/^https?:\/\/t\.me\//, "").split("?")[0].replace(/\/$/, "");
   const parts = clean.split("/");
   if (parts.length === 3) return `https://t.me/${parts[0]}/${parts[2]}`;
   return `https://t.me/${clean}`;
+}
+
+function loadInstagramEmbed() {
+  if (window.instgrm?.Embeds?.process) {
+    return Promise.resolve(window.instgrm);
+  }
+
+  if (instagramEmbedPromise) {
+    return instagramEmbedPromise;
+  }
+
+  const src = "https://www.instagram.com/embed.js";
+  const existing = document.querySelector(`script[src="${src}"]`);
+
+  if (existing) {
+    instagramEmbedPromise = new Promise((resolve, reject) => {
+      const finish = () => {
+        if (window.instgrm?.Embeds?.process) {
+          resolve(window.instgrm);
+        } else {
+          reject(new Error("Instagram SDK loaded without window.instgrm"));
+        }
+      };
+
+      existing.addEventListener("load", finish, { once: true });
+      existing.addEventListener("error", () => reject(new Error("Instagram SDK failed to load")), { once: true });
+
+      if (window.instgrm?.Embeds?.process) finish();
+    });
+
+    return instagramEmbedPromise;
+  }
+
+  instagramEmbedPromise = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = src;
+
+    script.onload = () => {
+      if (window.instgrm?.Embeds?.process) {
+        resolve(window.instgrm);
+      } else {
+        reject(new Error("Instagram SDK loaded without window.instgrm"));
+      }
+    };
+
+    script.onerror = () => reject(new Error("Instagram SDK failed to load"));
+    document.body.appendChild(script);
+  });
+
+  return instagramEmbedPromise;
 }
 
 export default function VideoEmbed({ platform, url }) {
@@ -18,7 +71,9 @@ export default function VideoEmbed({ platform, url }) {
 
     let cancelled = false;
 
-    fetch(`/api/telegram-media?url=${encodeURIComponent(normalizeTelegramUrl(url))}`, { signal: AbortSignal.timeout(12000) })
+    fetch(`/api/telegram-media?url=${encodeURIComponent(normalizeTelegramUrl(url))}`, {
+      signal: AbortSignal.timeout(12000),
+    })
       .then((response) => {
         if (!response.ok) throw new Error("Telegram media request failed");
         return response.json();
@@ -42,7 +97,6 @@ export default function VideoEmbed({ platform, url }) {
     container.innerHTML = "";
     container.className = "";
 
-    // TELEGRAM — extract the public media URL and use our own player.
     if (platform === "Telegram") {
       if (!telegramMedia) {
         container.className = "video-frame telegram-loading";
@@ -66,7 +120,6 @@ export default function VideoEmbed({ platform, url }) {
       return;
     }
 
-    // INSTAGRAM
     if (platform === "Instagram") {
       container.className = "instagram-frame";
       container.dataset.loading = "true";
@@ -80,34 +133,20 @@ export default function VideoEmbed({ platform, url }) {
       blockquote.style.margin = "0";
       container.appendChild(blockquote);
 
-      const existing = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
-
-      const process = () => {
-        window.instgrm?.Embeds?.process?.();
-        container.dataset.loading = "false";
-      };
-
-      if (existing) {
-        if (window.instgrm) process();
-        else existing.addEventListener("load", process, { once: true });
-      } else {
-        const script = document.createElement("script");
-        script.async = true;
-        script.src = "https://www.instagram.com/embed.js";
-        script.onload = process;
-        document.body.appendChild(script);
-      }
-
-      window.setTimeout(() => {
-        if (!container.querySelector("iframe")) {
-          process();
-        }
-      }, 5000);
+      loadInstagramEmbed()
+        .then((instagram) => {
+          if (!container.isConnected) return;
+          instagram.Embeds.process();
+          container.dataset.loading = "false";
+        })
+        .catch(() => {
+          if (!container.isConnected) return;
+          container.dataset.loading = "false";
+        });
 
       return;
     }
 
-    // YOUTUBE
     if (platform === "YouTube" || /youtube\.com\/|youtu\.be\//i.test(url)) {
       try {
         const parsed = new URL(url);
@@ -132,7 +171,6 @@ export default function VideoEmbed({ platform, url }) {
       return;
     }
 
-    // DIRECT VIDEO URL
     const video = document.createElement("video");
     video.src = url;
     video.controls = true;
