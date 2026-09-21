@@ -45,7 +45,12 @@ nav a:hover { opacity: 1; }
   position: relative;
 }
 .hero-copy { max-width: 900px; position: relative; z-index: 2; }
-.hero-eyebrow { animation: heroFadeIn .8s ease both; }
+.hero-eyebrow {
+  animation: heroFadeIn .8s ease both;
+  transition: transform .06s linear, opacity .06s linear;
+  transform: translate3d(calc(var(--hero-progress) * -5vw), calc(var(--hero-progress) * 62vh - 14vh), 0);
+  opacity: calc(1 - var(--hero-progress));
+}
 .hero-title {
   margin-bottom: 32px;
   font-size: clamp(64px, 9.5vw, 148px);
@@ -123,13 +128,14 @@ h1 em, h2 em { font-family: "Playfair Display", Georgia, serif; font-weight: 500
 .section-note { margin: 0; color: var(--muted); font-size: 12px; }
 .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; }
 .card { grid-column: span 2; }
-.card-2, .card-3 { margin-top: 70px; }
 .video-frame { width: 100%; aspect-ratio: 9 / 16; background: #e6e1da; overflow: hidden; border-radius: 2px; }
 .video-frame iframe, .video-frame video { width: 100%; height: 100%; border: 0; display: block; object-fit: cover; }
 .instagram-frame {
   overflow: visible;
   background: transparent;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: auto;
+  height: auto;
+  min-height: 0;
 }
 .instagram-frame .instagram-media {
   width: 100% !important;
@@ -178,7 +184,7 @@ footer { padding: 28px 5vw; border-top: 1px solid var(--line); display: flex; ju
   .hero-image { right: 4vw; top: 20%; width: 40vw; height: 46vh; }
   .hero-note { margin-top: 70px; align-self: flex-start; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .card, .card-2, .card-3 { grid-column: span 1; margin-top: 0; }
+  .card { grid-column: span 1; margin-top: 0; }
   .card-info { padding-top: 10px; }
   .card-info h3 { font-size: 15px; }
   .video-frame { aspect-ratio: 9 / 16; }
