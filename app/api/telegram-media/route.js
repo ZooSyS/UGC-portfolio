@@ -56,11 +56,12 @@ export async function GET(request) {
     const messageHtml = html.match(messagePattern)?.[0] || html;
 
     const video =
-      messageHtml.match(/<video[^>]+class=["'][^"']*tgme_widget_message_video[^"']*["'][^>]+src=["']([^"']+)/i)?.[1] ||
-      messageHtml.match(/<video[^>]+src=["']([^"']+)["']/i)?.[1];
+      messageHtml.match(/<video[^>]+(?:src|data-src)=["']([^"']+)["']/i)?.[1] ||
+      messageHtml.match(/<source[^>]+src=["']([^"']+)["']/i)?.[1] ||
+      messageHtml.match(/(?:src|data-src)=["'](https?:\\/\\/[^"']+\\.(?:mp4|webm)(?:\\?[^"']*)?)["']/i)?.[1];
 
     const posterStyle =
-      messageHtml.match(/tgme_widget_message_video_thumb[^>]*style=["'][^"']*background-image:\s*url\((?:'|")?([^)'"]+)/i)?.[1] ||
+      messageHtml.match(/(?:background-image:\s*url|poster=["'])(?:\(|["'])([^)'"]+)/i)?.[1] ||
       null;
 
     if (!video) {
