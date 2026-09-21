@@ -49,10 +49,12 @@ export async function GET(request) {
 
     const html = await response.text();
 
+    const messageId = telegramUrl.split("/").pop();
     const messagePattern = new RegExp(
-      `<div[^>]+class=["'][^"']*tgme_widget_message_wrap[^"']*["'][\\s\\S]*?<a[^>]+href=["']https?:\\/\\/t\\.me\\/[^"']*\\/${telegramUrl.split("/").pop()}["'][\\s\\S]*?<\\/div>`,
+      `<div[^>]+class=["'][^"']*tgme_widget_message_wrap[^"']*["'][\\s\\S]*?<a[^>]+href=["']https?:\\/\\/t\\.me\\/[^"']*\\/${messageId}["'][\\s\\S]*?<\\/div>`,
       "i"
     );
+
     const messageHtml = html.match(messagePattern)?.[0] || html;
 
     const video =
@@ -60,8 +62,10 @@ export async function GET(request) {
       messageHtml.match(/<source[^>]+src=["']([^"']+)["']/i)?.[1] ||
       null;
 
+    // Telegram often stores the preview image as a CSS background.
+    // Keep this regex deliberately simple to avoid escaping issues.
     const posterStyle =
-      messageHtml.match(/background-image:\\s*url\\((?:'|\")?([^)'\"]+)/i)?.[1] ||
+      messageHtml.match(/background-image:\s*url\(['"]?([^)'"]+)/i)?.[1] ||
       messageHtml.match(/poster=["']([^"']+)["']/i)?.[1] ||
       null;
 
@@ -69,14 +73,17 @@ export async function GET(request) {
       return NextResponse.json({ error: "No public video found" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      video: decodeHtml(video),
-      poster: posterStyle ? decodeHtml(posterStyle) : null,
-    }, {
-      headers: {
-        "Cache-Control": "public, max-age=300, s-maxage=300",
+    return NextResponse.json(
+      {
+        video: decodeHtml(video),
+        poster: posterStyle ? decodeHtml(posterStyle) : null,
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "public, max-age=300, s-maxage=300",
+        },
+      }
+    );
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Telegram extraction failed" },
