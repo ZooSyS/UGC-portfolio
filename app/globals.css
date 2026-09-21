@@ -53,24 +53,9 @@ nav a:hover { opacity: 1; }
   letter-spacing: -.065em;
   font-weight: 500;
   transform-origin: left top;
-  transform: translate3d(calc(var(--hero-progress) * -5vw), calc(var(--hero-progress) * -38vh), 0) scale(calc(1 - var(--hero-progress) * .82));
+  transform: translate3d(calc(var(--hero-progress) * -5vw), calc(var(--hero-progress) * 62vh - 14vh), 0) scale(calc(1 - var(--hero-progress) * .82));
   opacity: calc(1 - var(--hero-progress));
   transition: transform .06s linear, opacity .06s linear;
-}
-.hero-title::after {
-  content: "YULIANA.";
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 18px;
-  line-height: 1;
-  letter-spacing: .08em;
-  font-weight: 600;
-  transform: translate3d(calc((1 - var(--hero-progress)) * 0px), calc((1 - var(--hero-progress)) * 0px), 0);
-  transform-origin: left top;
-  opacity: var(--hero-progress);
-  pointer-events: none;
-  white-space: nowrap;
 }
 .hero-text, .hero .button, .hero-note { animation: heroFadeUp .8s ease 1s both; }
 .hero-text {
@@ -187,7 +172,7 @@ footer { padding: 28px 5vw; border-top: 1px solid var(--line); display: flex; ju
   nav a:not(.nav-cta) { display: none; }
   .hero { min-height: 92vh; padding: 18vw 7vw 12vw; }
   .hero-copy { max-width: 48%; }
-  .hero-title { font-size: clamp(58px, 18vw, 105px); transform: translate3d(0, calc(var(--hero-progress) * -30vh), 0) scale(calc(1 - var(--hero-progress) * .82)); }
+  .hero-title { font-size: clamp(58px, 18vw, 105px); transform: translate3d(calc(var(--hero-progress) * -2vw), calc(var(--hero-progress) * 62vh - 18vh), 0) scale(calc(1 - var(--hero-progress) * .82)); }
   .hero-text { margin-left: 0; font-size: 14px; }
   .hero .button { margin-left: 0; }
   .hero-image { right: 4vw; top: 20%; width: 40vw; height: 46vh; }
