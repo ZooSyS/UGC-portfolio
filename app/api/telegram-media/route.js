@@ -15,7 +15,7 @@ function normalizeTelegramUrl(raw) {
 
   if (!/^[A-Za-z0-9_+-]+$/.test(channel) || !/^\d+$/.test(messageId)) return null;
 
-  return `https://t.me/s/${channel}/${messageId}`;
+  return `https://t.me/${channel}/${messageId}?embed=1`;
 }
 
 function decodeHtml(value) {
