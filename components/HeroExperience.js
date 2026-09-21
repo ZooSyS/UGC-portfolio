@@ -10,6 +10,7 @@ export default function HeroExperience({
 }) {
   const heroRef = useRef(null);
   const titleRef = useRef(null);
+  const morphRef = useRef({ x: 0, y: 0, scale: 0.12 });
   const introRef = useRef(null);
 
   useEffect(() => {
@@ -25,13 +26,20 @@ export default function HeroExperience({
       const progress = Math.min(1, Math.max(0, -rect.top / travel));
 
       hero.style.setProperty("--hero-progress", progress.toFixed(3));
+      hero.style.setProperty("--hero-morph", Math.min(1, Math.max(0, (progress - 0.04) / 0.72)).toFixed(3));
       document.documentElement.style.setProperty("--hero-progress", progress.toFixed(3));
       const title = titleRef.current;
-      if (title) {
+      if (title && !morphRef.current.ready) {
         const rectTitle = title.getBoundingClientRect();
-        title.style.setProperty("--morph-x", `${window.innerWidth * 0.05 - rectTitle.left}px`);
-        title.style.setProperty("--morph-y", `${28 - rectTitle.top}px`);
-        title.style.setProperty("--morph-scale", (100 / Math.max(rectTitle.width, 1)).toFixed(4));
+        morphRef.current = {
+          ready: true,
+          x: window.innerWidth * 0.05 - rectTitle.left,
+          y: 28 - rectTitle.top,
+          scale: 18 / Math.max(rectTitle.height, 1),
+        };
+        title.style.setProperty("--morph-x", morphRef.current.x + "px");
+        title.style.setProperty("--morph-y", morphRef.current.y + "px");
+        title.style.setProperty("--morph-scale", morphRef.current.scale.toFixed(4));
       }
     };
 
