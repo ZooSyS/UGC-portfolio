@@ -117,7 +117,7 @@ export default function VideoEmbed({ platform, url }) {
 
         if (telegramMedia.poster) {
           const preview = document.createElement("img");
-          preview.src = telegramMedia.poster;
+          preview.src = `/api/telegram-poster?url=${encodeURIComponent(normalizeTelegramUrl(url))}`;
           preview.alt = "";
           preview.className = "telegram-preview";
           preview.addEventListener("error", () => {
