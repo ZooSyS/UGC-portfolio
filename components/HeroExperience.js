@@ -25,6 +25,7 @@ export default function HeroExperience({
       const progress = Math.min(1, Math.max(0, -rect.top / travel));
 
       hero.style.setProperty("--hero-progress", progress.toFixed(3));
+      document.documentElement.style.setProperty("--hero-progress", progress.toFixed(3));
     };
 
     const onScroll = () => {
