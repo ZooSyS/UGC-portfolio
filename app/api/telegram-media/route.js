@@ -69,7 +69,20 @@ export async function GET(request) {
           error: "No public video found",
           htmlLength: html.length,
           videoIndex,
-          snippet: videoIndex >= 0 ? html.slice(Math.max(0, videoIndex - 300), videoIndex + 1200) : html.slice(0, 1500),
+          videoWrapIndex: html.toLowerCase().indexOf("tgme_widget_message_video"),
+          telescoIndex: html.toLowerCase().indexOf("telesco.pe"),
+          mp4Index: html.toLowerCase().indexOf(".mp4"),
+          snippet: (() => {
+            const index = Math.max(
+              videoIndex,
+              html.toLowerCase().indexOf("tgme_widget_message_video"),
+              html.toLowerCase().indexOf("telesco.pe"),
+              html.toLowerCase().indexOf(".mp4")
+            );
+            return index >= 0
+              ? html.slice(Math.max(0, index - 800), index + 3000)
+              : html.slice(0, 1500);
+          })(),
         },
         { status: 404 }
       );
