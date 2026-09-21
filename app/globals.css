@@ -53,6 +53,7 @@ nav a:hover { opacity: 1; }
 }
 .hero-title {
   margin-bottom: 32px;
+  animation: heroTitleIn .9s cubic-bezier(.2,.7,.2,1) .15s both;
   font-size: clamp(64px, 9.5vw, 148px);
   line-height: .86;
   letter-spacing: -.065em;
