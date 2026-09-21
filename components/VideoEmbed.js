@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 function InstagramEmbed({ url }) {
-  const ref = useRef(null);
-
   useEffect(() => {
     const render = () => window.instgrm?.Embeds?.process();
 
@@ -20,7 +18,7 @@ function InstagramEmbed({ url }) {
   }, [url]);
 
   return (
-    <div className="video-frame instagram-frame" ref={ref}>
+    <div className="video-frame instagram-frame">
       <blockquote
         className="instagram-media"
         data-instgrm-permalink={url}
@@ -57,6 +55,22 @@ function YouTubeEmbed({ url }) {
   }
 }
 
+function TelegramEmbed({ url }) {
+  const embedUrl = url.includes("?") ? `${url}&embed=1` : `${url}?embed=1`;
+
+  return (
+    <div className="video-frame telegram-frame">
+      <iframe
+        src={embedUrl}
+        title="Telegram video"
+        loading="lazy"
+        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
+  );
+}
+
 export default function VideoEmbed({ url }) {
   if (!url) return null;
 
@@ -66,6 +80,10 @@ export default function VideoEmbed({ url }) {
 
   if (/youtube\.com\/|youtu\.be\//i.test(url)) {
     return <YouTubeEmbed url={url} />;
+  }
+
+  if (/(^https?:\/\/)?(www\.)?t\.me\//i.test(url) || /telegram\.me\//i.test(url)) {
+    return <TelegramEmbed url={url} />;
   }
 
   return (
