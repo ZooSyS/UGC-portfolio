@@ -58,8 +58,12 @@ export async function GET(request) {
       videoTag?.match(/\bdata-src=["']([^"']+)["']/i)?.[1] ||
       null;
 
+    const width = videoTag?.match(/\bwidth=["'](\d+(?:\.\d+)?)["']/i)?.[1] || null;
+    const height = videoTag?.match(/\bheight=["'](\d+(?:\.\d+)?)["']/i)?.[1] || null;
+
     const posterStyle =
       videoTag?.match(/\bposter=["']([^"']+)["']/i)?.[1] ||
+      html.match(/<meta[^>]+property=["'](?:og:image|twitter:image)["'][^>]+content=["']([^"']+)["']/i)?.[1] ||
       null;
 
     if (!video) {
@@ -92,6 +96,8 @@ export async function GET(request) {
       {
         video: decodeHtml(video),
         poster: posterStyle ? decodeHtml(posterStyle) : null,
+        width: width ? Number(width) : null,
+        height: height ? Number(height) : null,
       },
       {
         headers: {
