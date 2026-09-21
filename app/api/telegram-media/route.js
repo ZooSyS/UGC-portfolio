@@ -63,7 +63,16 @@ export async function GET(request) {
       null;
 
     if (!video) {
-      return NextResponse.json({ error: "No public video found" }, { status: 404 });
+      const videoIndex = html.toLowerCase().indexOf("<video");
+      return NextResponse.json(
+        {
+          error: "No public video found",
+          htmlLength: html.length,
+          videoIndex,
+          snippet: videoIndex >= 0 ? html.slice(Math.max(0, videoIndex - 300), videoIndex + 1200) : html.slice(0, 1500),
+        },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(
