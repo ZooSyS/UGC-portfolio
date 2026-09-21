@@ -9,12 +9,10 @@ export default function HeroExperience({
   image,
 }) {
   const heroRef = useRef(null);
-  const titleRef = useRef(null);
 
   useEffect(() => {
     const hero = heroRef.current;
-    const titleNode = titleRef.current;
-    if (!hero || !titleNode) return;
+    if (!hero) return;
 
     let frame = 0;
 
@@ -47,7 +45,7 @@ export default function HeroExperience({
     <section className="hero" id="top" ref={heroRef}>
       <div className="hero-copy">
         <p className="eyebrow hero-eyebrow">UGC CREATOR · CONTENT · REVIEWS</p>
-        <h1 ref={titleRef} className="hero-title">
+        <h1 className="hero-title">
           {title || "Контент, которому верят."}
         </h1>
         <p className="hero-text">
@@ -58,9 +56,11 @@ export default function HeroExperience({
         </a>
       </div>
 
-      {image && (
-        <img className="hero-image" src={image} alt="" />
-      )}
+      <div className="hero-morph-logo" aria-hidden="true">
+        YULIANA<span>.</span>
+      </div>
+
+      {image && <img className="hero-image" src={image} alt="" />}
 
       <div className="hero-note">
         <span>01</span>
