@@ -58,10 +58,11 @@ export async function GET(request) {
     const video =
       messageHtml.match(/<video[^>]+(?:src|data-src)=["']([^"']+)["']/i)?.[1] ||
       messageHtml.match(/<source[^>]+src=["']([^"']+)["']/i)?.[1] ||
-      messageHtml.match(/(?:src|data-src)=["'](https?:\\/\\/[^"']+\\.(?:mp4|webm)(?:\\?[^"']*)?)["']/i)?.[1];
+      null;
 
     const posterStyle =
-      messageHtml.match(/(?:background-image:\s*url|poster=["'])(?:\(|["'])([^)'"]+)/i)?.[1] ||
+      messageHtml.match(/background-image:\\s*url\\((?:'|\")?([^)'\"]+)/i)?.[1] ||
+      messageHtml.match(/poster=["']([^"']+)["']/i)?.[1] ||
       null;
 
     if (!video) {
