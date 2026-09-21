@@ -57,6 +57,10 @@ export default async function Home() {
   const heroImage = first(hero.image);
   const aboutImage = first(about.image);
   const contactEmail = first(contact.email, "hello@example.com");
+  const contactTelegram = first(contact.telegram);
+  const contactInstagram = first(contact.instagram);
+  const formats = Array.isArray(content.formats?.item) ? content.formats.item : (content.formats?.item ? [content.formats.item] : []);
+  const niches = Array.isArray(content.niches?.item) ? content.niches.item : (content.niches?.item ? [content.niches.item] : []);
 
   return (
     <main>
@@ -77,6 +81,7 @@ export default async function Home() {
       />
 
       <section className="work" id="work">
+        <div className="section-number">01</div>
         <div className="section-head">
           <div>
             <p className="eyebrow">SELECTED WORK</p>
@@ -102,6 +107,7 @@ export default async function Home() {
       </section>
 
       <section className="about" id="about">
+        <div className="section-number">02</div>
         <div className="about-number">02</div>
         <div>
           <p className="eyebrow">ABOUT</p>
@@ -115,12 +121,33 @@ export default async function Home() {
         </div>
       </section>
 
+      <section className="service-section" id="formats">
+        <div className="section-number">03</div>
+        <div className="service-content">
+          <p className="eyebrow">FORMATS</p>
+          <h2>Форматы работы</h2>
+          {formats.length > 0 && <div className="service-list">{formats.map((item, index) => <div className="service-item" key={index}>{item}</div>)}</div>}
+        </div>
+      </section>
+
+      <section className="service-section" id="niches">
+        <div className="section-number">04</div>
+        <div className="service-content">
+          <p className="eyebrow">CATEGORIES</p>
+          <h2>Направления ниш товаров</h2>
+          {niches.length > 0 && <div className="service-list">{niches.map((item, index) => <div className="service-item" key={index}>{item}</div>)}</div>}
+        </div>
+      </section>
+
       <section className="contact" id="contact">
+        <div className="section-number">05</div>
         <p className="eyebrow">LET'S WORK TOGETHER</p>
         <h2>{first(contact.title, "Есть продукт? Давайте снимем.")}</h2>
-        <a className="contact-link" href={`mailto:${contactEmail}`}>
-          {contactEmail} ↗
-        </a>
+        <div className="contact-links">
+          <a className="contact-link" href={`mailto:${contactEmail}`}>{contactEmail} ↗</a>
+          {contactTelegram && <a className="contact-link" href={contactTelegram} target="_blank" rel="noreferrer">Telegram ↗</a>}
+          {contactInstagram && <a className="contact-link" href={contactInstagram} target="_blank" rel="noreferrer">Instagram ↗</a>}
+        </div>
       </section>
 
       <footer>
