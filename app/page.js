@@ -108,7 +108,6 @@ export default async function Home() {
 
       <section className="about" id="about">
         <div className="section-number">02</div>
-        <div className="about-number">02</div>
         <div>
           <p className="eyebrow">ABOUT</p>
           <h2>{first(about.title, "Живой контент вместо постановки.")}</h2>
