@@ -12,7 +12,6 @@ function normalizeTelegramUrl(url) {
 export default function VideoEmbed({ platform, url }) {
   const containerRef = useRef(null);
   const [telegramMedia, setTelegramMedia] = useState(null);
-  const [instagramReady, setInstagramReady] = useState(false);
 
   useEffect(() => {
     if (platform !== "Telegram" || !url) return;
@@ -71,6 +70,7 @@ export default function VideoEmbed({ platform, url }) {
     if (platform === "Instagram") {
       container.className = "instagram-frame";
       container.dataset.loading = "true";
+
       const blockquote = document.createElement("blockquote");
       blockquote.className = "instagram-media";
       blockquote.setAttribute("data-instgrm-permalink", url);
@@ -81,9 +81,9 @@ export default function VideoEmbed({ platform, url }) {
       container.appendChild(blockquote);
 
       const existing = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
+
       const process = () => {
         window.instgrm?.Embeds?.process?.();
-        setInstagramReady(true);
         container.dataset.loading = "false";
       };
 
@@ -103,7 +103,7 @@ export default function VideoEmbed({ platform, url }) {
           process();
         }
       }, 5000);
-      }
+
       return;
     }
 
@@ -112,10 +112,15 @@ export default function VideoEmbed({ platform, url }) {
       try {
         const parsed = new URL(url);
         let videoId = parsed.searchParams.get("v");
-        if (!videoId && parsed.hostname.includes("youtu.be")) videoId = parsed.pathname.slice(1);
+
+        if (!videoId && parsed.hostname.includes("youtu.be")) {
+          videoId = parsed.pathname.slice(1);
+        }
+
         if (!videoId) return;
 
         container.className = "video-frame";
+
         const iframe = document.createElement("iframe");
         iframe.src = `https://www.youtube.com/embed/${videoId}`;
         iframe.title = "UGC video";
@@ -127,6 +132,7 @@ export default function VideoEmbed({ platform, url }) {
       return;
     }
 
+    // DIRECT VIDEO URL
     const video = document.createElement("video");
     video.src = url;
     video.controls = true;
