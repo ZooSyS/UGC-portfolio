@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 function InstagramEmbed({ url }) {
+  const ref = useRef(null);
+
   useEffect(() => {
     const render = () => window.instgrm?.Embeds?.process();
-
     if (!document.querySelector('script[src="https://www.instagram.com/embed.js"]')) {
       const script = document.createElement("script");
       script.src = "https://www.instagram.com/embed.js";
@@ -18,7 +19,7 @@ function InstagramEmbed({ url }) {
   }, [url]);
 
   return (
-    <div className="video-frame instagram-frame">
+    <div className="video-frame instagram-frame" ref={ref}>
       <blockquote
         className="instagram-media"
         data-instgrm-permalink={url}
@@ -56,18 +57,45 @@ function YouTubeEmbed({ url }) {
 }
 
 function TelegramEmbed({ url }) {
-  const embedUrl = url.includes("?") ? `${url}&embed=1` : `${url}?embed=1`;
+  const parsed = (() => {
+    try {
+      const value = new URL(url);
+      const parts = value.pathname.split("/").filter(Boolean);
+      return {
+        username: parts[0] || "",
+        messageId: parts[1] || "",
+      };
+    } catch {
+      return { username: "", messageId: "" };
+    }
+  })();
+
+  useEffect(() => {
+    if (!parsed.username || !parsed.messageId) return;
+
+    const container = document.getElementById(
+      `telegram-embed-${parsed.username}-${parsed.messageId}`
+    );
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://telegram.org/js/telegram-widget.js?22";
+    script.setAttribute("data-telegram-post", `${parsed.username}/${parsed.messageId}`);
+    script.setAttribute("data-width", "100%");
+    script.setAttribute("data-userpic", "false");
+    container.appendChild(script);
+  }, [parsed.username, parsed.messageId]);
+
+  if (!parsed.username || !parsed.messageId) return null;
 
   return (
-    <div className="video-frame telegram-frame">
-      <iframe
-        src={embedUrl}
-        title="Telegram video"
-        loading="lazy"
-        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-        allowFullScreen
-      />
-    </div>
+    <div
+      id={`telegram-embed-${parsed.username}-${parsed.messageId}`}
+      className="telegram-frame"
+    />
   );
 }
 
