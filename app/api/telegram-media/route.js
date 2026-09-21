@@ -51,15 +51,15 @@ export async function GET(request) {
 
     // Public Telegram video posts expose the media as a regular <video src="..."> tag.
     // Keep extraction intentionally simple: find the video tag and read its src.
-    const videoTag = html.match(/<video\\b[^>]*>/i)?.[0];
+    const videoTag = html.match(/<video\b[^>]*>/i)?.[0];
 
     const video =
-      videoTag?.match(/\\bsrc=["']([^"']+)["']/i)?.[1] ||
-      videoTag?.match(/\\bdata-src=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\bsrc=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\bdata-src=["']([^"']+)["']/i)?.[1] ||
       null;
 
     const posterStyle =
-      videoTag?.match(/\\bposter=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\bposter=["']([^"']+)["']/i)?.[1] ||
       null;
 
     if (!video) {
