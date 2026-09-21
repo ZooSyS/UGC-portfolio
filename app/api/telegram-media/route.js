@@ -49,20 +49,17 @@ export async function GET(request) {
 
     const html = await response.text();
 
-    // Telegram exposes public video posts as a dedicated video element.
-    // Match the video by its class, regardless of attribute order.
-    const videoTag = html.match(
-      /<video(?=[^>]*class=["'][^"']*tgme_widget_message_video[^"']*["'])[^>]*>/i
-    )?.[0];
+    // Public Telegram video posts expose the media as a regular <video src="..."> tag.
+    // Keep extraction intentionally simple: find the video tag and read its src.
+    const videoTag = html.match(/<video\\b[^>]*>/i)?.[0];
 
     const video =
-      videoTag?.match(/src=["']([^"']+)["']/i)?.[1] ||
-      videoTag?.match(/data-src=["']([^"']+)["']/i)?.[1] ||
-      html.match(/<source[^>]+src=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\\bsrc=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\\bdata-src=["']([^"']+)["']/i)?.[1] ||
       null;
 
     const posterStyle =
-      videoTag?.match(/poster=["']([^"']+)["']/i)?.[1] ||
+      videoTag?.match(/\\bposter=["']([^"']+)["']/i)?.[1] ||
       null;
 
     if (!video) {
