@@ -10,7 +10,7 @@ function normalizeTelegramUrl(raw) {
   const channel = parts[0];
   const messageId = parts[parts.length - 1];
   if (!/^[A-Za-z0-9_+-]+$/.test(channel) || !/^\d+$/.test(messageId)) return null;
-  return `https://t.me/${channel}/${messageId}?embed=1`;
+  return `https://t.me/${channel}/${messageId}`;
 }
 
 function decodeHtml(value) {
