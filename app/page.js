@@ -88,7 +88,7 @@ export default async function Home() {
           <div className="grid">
             {projects.map((project, index) => (
               <article className={`card card-${(index % 3) + 1}`} key={project.id}>
-                <VideoEmbed url={project.video} />
+                <VideoEmbed platform={project.platform} url={project.video} />
                 <div className="card-info">
                   {project.platform && <span>{project.platform}</span>}
                   <h3>{project.title || "UGC project"}</h3>
