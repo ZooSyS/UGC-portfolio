@@ -59,7 +59,11 @@ nav a:hover { opacity: 1; }
   letter-spacing: -.065em;
   font-weight: 500;
   transform-origin: left top;
-  transform: translate3d(calc(var(--hero-progress) * -5vw), calc(var(--hero-progress) * 62vh - 14vh), 0) scale(calc(1 - var(--hero-progress) * .82));
+  transform: translate3d(
+    calc(var(--hero-progress) * var(--morph-x, 0px)),
+    calc(var(--hero-progress) * var(--morph-y, 0px)),
+    0
+  ) scale(calc(1 - var(--hero-progress) * (1 - var(--morph-scale, .18))));
   opacity: calc(1 - var(--hero-progress));
   transition: transform .06s linear, opacity .06s linear;
 }
@@ -132,11 +136,13 @@ h1 em, h2 em { font-family: "Playfair Display", Georgia, serif; font-weight: 500
 .video-frame { width: 100%; aspect-ratio: 9 / 16; background: #e6e1da; overflow: hidden; border-radius: 2px; }
 .video-frame iframe, .video-frame video { width: 100%; height: 100%; border: 0; display: block; object-fit: cover; }
 .instagram-frame {
+  width: 100%;
   overflow: visible;
   background: transparent;
   aspect-ratio: auto;
   height: auto;
   min-height: 0;
+  border-radius: 0;
 }
 .instagram-frame .instagram-media {
   width: 100% !important;
