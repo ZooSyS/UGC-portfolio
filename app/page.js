@@ -1,4 +1,5 @@
 import VideoEmbed from "../components/VideoEmbed";
+import HeroExperience from "../components/HeroExperience";
 
 import { getSiteData } from "../lib/notion";
 
@@ -68,25 +69,12 @@ export default async function Home() {
         </nav>
       </header>
 
-      <section className="hero" id="top">
-        <div className="hero-copy">
-          <p className="eyebrow">UGC CREATOR · CONTENT · REVIEWS</p>
-          <h1>{first(hero.title, "Контент, которому верят.")}</h1>
-          <p className="hero-text">
-            {text(hero.text, "Создаю живые видео для брендов — от распаковок и обзоров до нативных lifestyle-сюжетов.")}
-          </p>
-          <a className="button" href="#work">
-            {first(hero.button, "Смотреть работы")} <span>↓</span>
-          </a>
-        </div>
-        <div className="hero-note">
-          <span>01</span>
-          <p>Не просто показать продукт.<br />Показать его в жизни.</p>
-        </div>
-        {heroImage && (
-          <img className="hero-image" src={heroImage} alt="" />
-        )}
-      </section>
+      <HeroExperience
+        title={first(hero.title, "Контент, которому верят.")}
+        text={text(hero.text, "Создаю живые видео для брендов — от распаковок и обзоров до нативных lifestyle-сюжетов.")}
+        button={first(hero.button, "Смотреть работы")}
+        image={heroImage}
+      />
 
       <section className="work" id="work">
         <div className="section-head">
